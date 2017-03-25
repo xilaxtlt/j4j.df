@@ -19,6 +19,7 @@
 
     <properties>
         <snakeyaml.version>1.18</snakeyaml.version>
+        <javapoet.version>1.8.0</javapoet.version>
     </properties>
 
     <build>

@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public class Pipeline {
     private Map<String, String> inputValues;
-    private Map<String, String> outputValue;
+    private OutputValue outputValue;
     private List<String> units;
 
     public Map<String, String> getInputValues() {
@@ -20,11 +20,11 @@ public class Pipeline {
         this.inputValues = inputValues;
     }
 
-    public Map<String, String> getOutputValue() {
+    public OutputValue getOutputValue() {
         return outputValue;
     }
 
-    public void setOutputValue(Map<String, String> outputValue) {
+    public void setOutputValue(OutputValue outputValue) {
         this.outputValue = outputValue;
     }
 

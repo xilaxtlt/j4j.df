@@ -6,7 +6,7 @@ package ru.j4j.mediation.examples.impl;
  */
 public class _ExampleDataFlow_ {
 
-    public static Result exampleLine(Event ctx_event) {
+    public static Result examplePipeline(Event ctx_event) {
         final EventParametersExtractor unit_eventParametersExtractor = new EventParametersExtractor();
         final EventNamePrinter unit_eventNamePrinter = new EventNamePrinter();
         final ResultBuilder unit_resultBuilder = new ResultBuilder();

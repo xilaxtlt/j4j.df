@@ -1,7 +1,11 @@
 package ru.j4j.mediation.compiler;
 
 import org.yaml.snakeyaml.Yaml;
+import ru.j4j.mediation.compiler.builder.MediationCompiler;
 import ru.j4j.mediation.compiler.config.MediationConfig;
+import ru.j4j.mediation.compiler.model.MediationModel;
+import ru.j4j.mediation.compiler.model.UnitClassName;
+import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 import ru.j4j.mediation.core.annotations.FromContext;
 import ru.j4j.mediation.core.annotations.RunnableMethod;
 import ru.j4j.mediation.core.annotations.ToContext;
@@ -11,11 +15,13 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Artemiy.Shchekotov
@@ -30,35 +36,53 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     private ProcessingEnvironment processingEnv;
     private MediationConfig mediationConfig;
+    private MediationModel model = new MediationModel();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> result = new HashSet<>(super.getSupportedAnnotationTypes());
-        result.add(FromContext.class.getName());
-        result.add(ToContext.class.getName());
-        result.add(RunnableMethod.class.getName());
+        result.addAll(asList(
+                FromContext.class.getName(),
+                ToContext.class.getName(),
+                RunnableMethod.class.getName()
+        ));
         return Collections.unmodifiableSet(result);
     }
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.processingEnv = processingEnv;
-        InputStream configStream = classLoader.getResourceAsStream(DEFAULT_CONFIG_FILE_NAME);
-        this.mediationConfig = new Yaml().loadAs(configStream, MediationConfig.class);
+        this.processingEnv   = processingEnv;
+        this.mediationConfig = loadConfig();
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (roundEnv.processingOver()) {
-            System.out.println(processingEnv);
-            System.out.println("is processingOver");
-            //TODO finish and generate classes here
+        if (!roundEnv.processingOver()) {
+            fillModel(roundEnv);
         } else {
-            System.out.println("is not processingOver");
-            //TODO collect model by annotations
+            new MediationCompiler(processingEnv, mediationConfig, model).compile();
         }
         return false;
+    }
+
+    private MediationConfig loadConfig() {
+        return new Yaml().loadAs(classLoader.getResourceAsStream(DEFAULT_CONFIG_FILE_NAME), MediationConfig.class);
+    }
+
+    private void fillModel(RoundEnvironment roundEnv) {
+        roundEnv.getElementsAnnotatedWith(FromContext.class).forEach(element -> {
+            Element type = element.getEnclosingElement();
+            model.getUnit(UnitClassName.of(type.toString()), CreateIfNotExists.YES)
+                    .getGetter(element.getSimpleName().toString(), CreateIfNotExists.YES);
+            //TODO
+        });
+        roundEnv.getElementsAnnotatedWith(ToContext.class).forEach(element -> {
+            Element type = element.getEnclosingElement();
+            model.getUnit(UnitClassName.of(type.toString()), CreateIfNotExists.YES)
+                    .getSetter(element.getSimpleName().toString(), CreateIfNotExists.YES);
+            //TODO
+        });
     }
 
 }

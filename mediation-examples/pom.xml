@@ -11,11 +11,18 @@
     </parent>
 
     <artifactId>mediation-examples</artifactId>
-    <packaging>pom</packaging>
 
-    <modules>
-        <module>mediation-examples-configurations</module>
-        <module>mediation-examples-impl</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>ru.j4j.mediation</groupId>
+            <artifactId>mediation-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ru.j4j.mediation</groupId>
+            <artifactId>mediation-compiler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -4,14 +4,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.ElementType.METHOD;
 
 /**
  * @author Artemiy.Shchekotov
- * @since 3/21/2017
+ * @since 3/25/2017
  */
-@Target({TYPE})
+@Target(METHOD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface DataFlowConfiguration {
-    String value();
+public @interface RunnableMethod {
 }

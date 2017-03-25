@@ -12,6 +12,6 @@ import static java.lang.annotation.ElementType.METHOD;
  */
 @Target(METHOD)
 @Retention(RetentionPolicy.SOURCE)
-public @interface ForContext {
+public @interface ToContext {
     String value() default "";
 }

@@ -10,7 +10,8 @@ public final class RunDataFlowPipeLine {
     }
 
     public static void main(String[] args) {
-        //TODO Run
+        Result result = _ExampleDataFlow_.exampleLine(new Event("ExampleEvent", "this is event text"));
+        System.out.println(result);
     }
 
 }

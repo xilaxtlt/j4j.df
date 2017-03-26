@@ -4,9 +4,9 @@ package ru.j4j.mediation.compiler.config;
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
  */
-public class ConfigurationException extends RuntimeException {
+public class MediationCompileException extends RuntimeException {
 
-    public ConfigurationException(String message) {
+    public MediationCompileException(String message) {
         super(message);
     }
 

@@ -25,7 +25,7 @@ public class MediationCompiler {
     public void compile() {
         config.getMediation().forEach((dataFlowName, dataFlow) ->
                 wrapThrowable(() ->
-                        new DataFlowBuilder(processingEnv.getFiler(), config, dataFlowName, dataFlow).write())
+                        new DataFlowBuilder(processingEnv.getFiler(), config, model, dataFlowName, dataFlow).write())
         );
     }
 

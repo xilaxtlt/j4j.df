@@ -1,15 +1,16 @@
 package ru.j4j.mediation.compiler.builder;
 
 import com.squareup.javapoet.*;
-import ru.j4j.mediation.compiler.config.ConfigurationException;
 import ru.j4j.mediation.compiler.config.DataFlow;
 import ru.j4j.mediation.compiler.config.MediationConfig;
+import ru.j4j.mediation.compiler.model.MediationModel;
+import ru.j4j.mediation.compiler.model.UnitClassName;
+import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 
 import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
 import java.io.IOException;
 
-import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 
 /**
@@ -23,12 +24,18 @@ public class DataFlowBuilder {
 
     private final Filer filer;
     private final MediationConfig config;
+    private final MediationModel model;
     private final String dataFlowName;
     private final DataFlow dataFlow;
 
-    public DataFlowBuilder(Filer filer, MediationConfig config, String dataFlowName, DataFlow dataFlow) {
+    public DataFlowBuilder(Filer filer,
+                           MediationConfig config,
+                           MediationModel model,
+                           String dataFlowName,
+                           DataFlow dataFlow) {
         this.filer        = filer;
         this.config       = config;
+        this.model        = model;
         this.dataFlowName = dataFlowName;
         this.dataFlow     = dataFlow;
     }
@@ -59,35 +66,36 @@ public class DataFlowBuilder {
             // ****************************
             CodeBlock.Builder codeBuilder = CodeBlock.builder();
 
-            // ****************************
-            // Init Units
-            // ****************************
+            codeBuilder.add("// ****************************\n");
+            codeBuilder.add("// Init Units\n");
+            codeBuilder.add("// ****************************\n");
             ofNullable(pipeline.getUnits()).ifPresent(units -> units.forEach(unitName -> {
-                String varType = ofNullable(config.getUnits().get(unitName))
-                        .orElseThrow(() -> new ConfigurationException(format("Undefined unit name \"%s\"", unitName)));
-                String varName = UNIT_PREFIX + unitName;
-                codeBuilder.addStatement("final $1T $2N = new $1T()", ClassName.bestGuess(varType), varName);
+                codeBuilder.addStatement("final $1T $2N = new $1T()",
+                        ClassName.bestGuess(config.getMandatoryUnitType(unitName)), UNIT_PREFIX + unitName);
             }));
 
-            // ****************************
-            // Init Context
-            // ****************************
+            codeBuilder.add("\n");
+            codeBuilder.add("// ****************************\n");
+            codeBuilder.add("// Init Context\n");
+            codeBuilder.add("// ****************************\n");
+            pipeline.getUnits().forEach(unitName ->
+                    model.getUnit(UnitClassName.of(config.getMandatoryUnitType(unitName)), CreateIfNotExists.NO)
+                            .getAllGetters()
+                            .forEach((getterName, getter) ->
+                                    codeBuilder.addStatement("$1T $2N",
+                                            ClassName.bestGuess(getter.getReturnType()), CONTEXT_PREFIX + getterName))
+            );
+
+            codeBuilder.add("\n");
+            codeBuilder.add("// ****************************\n");
+            codeBuilder.add("// Perform Units\n");
+            codeBuilder.add("// ****************************\n");
             //TODO
 
-            ofNullable(pipeline.getOutputValue()).ifPresent(outputValue -> {
-                ClassName className = ClassName.bestGuess(outputValue.getType());
-                codeBuilder.addStatement("$1T $2N", className, CONTEXT_PREFIX + outputValue.getName());
-            });
-
-
-            // ****************************
-            // Perform Units
-            // ****************************
-            //TODO
-
-            // ****************************
-            // Output Value
-            // ****************************
+            codeBuilder.add("\n");
+            codeBuilder.add("// ****************************\n");
+            codeBuilder.add("// Output Value\n");
+            codeBuilder.add("// ****************************\n");
             ofNullable(pipeline.getOutputValue()).ifPresent(outputValue -> {
                 ClassName className = ClassName.bestGuess(outputValue.getType());
                 codeBuilder.addStatement("return $1N", CONTEXT_PREFIX + outputValue.getName());

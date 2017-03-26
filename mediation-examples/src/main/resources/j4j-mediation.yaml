@@ -10,7 +10,7 @@ mediation:
         inputValues:
           event: "ru.j4j.mediation.examples.impl.Event"
         outputValue:
-          name: "result"
+          name: "Result"
           type: "ru.j4j.mediation.examples.impl.Result"
         units: ["eventParametersExtractor", "eventNamePrinter", "resultBuilder"]
 

@@ -3,6 +3,9 @@ package ru.j4j.mediation.compiler.config;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.lang.String.format;
+import static java.util.Optional.ofNullable;
+
 /**
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
@@ -25,6 +28,11 @@ public class MediationConfig {
             units = new HashMap<>();
         }
         return units;
+    }
+
+    public String getMandatoryUnitType(String unitName) {
+        return ofNullable(getUnits().get(unitName))
+                .orElseThrow(() -> new MediationCompileException(format("Undefined unit name \"%s\"", unitName)));
     }
 
     public Map<String, DataFlow> getMediation() {

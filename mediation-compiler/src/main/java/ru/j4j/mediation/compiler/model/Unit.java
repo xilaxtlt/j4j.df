@@ -2,6 +2,7 @@ package ru.j4j.mediation.compiler.model;
 
 import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,14 @@ public class Unit {
 
     public String getUnitType() {
         return unitType;
+    }
+
+    public Map<String, UnitGetter> getAllGetters() {
+        return Collections.unmodifiableMap(getters);
+    }
+
+    public Map<String, UnitSetter> getAllSetters() {
+        return Collections.unmodifiableMap(setters);
     }
 
     public UnitGetter getGetter(String getterName, CreateIfNotExists createIfNotExists) {

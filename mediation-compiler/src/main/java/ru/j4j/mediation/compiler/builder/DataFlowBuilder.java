@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import ru.j4j.mediation.compiler.config.DataFlow;
 import ru.j4j.mediation.compiler.config.MediationConfig;
 import ru.j4j.mediation.compiler.model.MediationModel;
+import ru.j4j.mediation.compiler.model.Unit;
 import ru.j4j.mediation.compiler.model.UnitClassName;
 import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 
@@ -90,6 +91,16 @@ public class DataFlowBuilder {
             codeBuilder.add("// ****************************\n");
             codeBuilder.add("// Perform Units\n");
             codeBuilder.add("// ****************************\n");
+            ofNullable(pipeline.getUnits()).ifPresent(units -> units.forEach(unitName -> {
+                String unitType = config.getMandatoryUnitType(unitName);
+                Unit   unit     = model.getUnit(UnitClassName.of(unitType), CreateIfNotExists.NO);
+                unit.getAllGetters().forEach((getterName, getter) -> {
+                    codeBuilder.addStatement("$1N = $2N.$3L()",
+                            CONTEXT_PREFIX + getterName,
+                            UNIT_PREFIX + unitName,
+                            getter.getOriginalGetterName());
+                });
+            }));
             //TODO
 
             codeBuilder.add("\n");

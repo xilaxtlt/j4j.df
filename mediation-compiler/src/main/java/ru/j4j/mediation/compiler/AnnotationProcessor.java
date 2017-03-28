@@ -86,10 +86,11 @@ public class AnnotationProcessor extends AbstractProcessor {
                 .map(ExecutableElement.class::cast)
                 .forEach(element -> {
 
-                    Element type       = element.getEnclosingElement();
-                    String  unitName   = type.toString();
-                    String  returnType = element.getReturnType().toString();
-                    String  getterName = element.getSimpleName().toString();
+                    Element type         = element.getEnclosingElement();
+                    String  unitName     = type.toString();
+                    String  returnType   = element.getReturnType().toString();
+                    String  getterName   = element.getSimpleName().toString();
+                    String  originalName = getterName;
 
                     if (getterName.indexOf("get") == 0) {
                         if (getterName.length() < 4) {
@@ -107,7 +108,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                     model.getUnit(UnitClassName.of(unitName), CreateIfNotExists.YES)
                             .getGetter(getterName, CreateIfNotExists.YES)
-                            .setReturnType(returnType);
+                            .setReturnType(returnType)
+                            .setOriginalGetterName(originalName);
 
                 });
     }
@@ -118,9 +120,10 @@ public class AnnotationProcessor extends AbstractProcessor {
                 .map(ExecutableElement.class::cast)
                 .forEach(element -> {
 
-                    Element type       = element.getEnclosingElement();
-                    String  unitName   = type.toString();
-                    String  setterName = element.getSimpleName().toString();
+                    Element type         = element.getEnclosingElement();
+                    String  unitName     = type.toString();
+                    String  setterName   = element.getSimpleName().toString();
+                    String  originalName = setterName;
 
                     if (setterName.indexOf("set") == 0) {
                         if (setterName.length() < 4) {
@@ -144,7 +147,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
                     model.getUnit(UnitClassName.of(unitName), CreateIfNotExists.YES)
                             .getSetter(setterName, CreateIfNotExists.YES)
-                            .setArgumentType(parameters.get(0).asType().toString());
+                            .setArgumentType(parameters.get(0).asType().toString())
+                            .setOriginalSetterName(originalName);
                 });
     }
 

@@ -5,6 +5,7 @@ package ru.j4j.mediation.compiler.model;
  * @since 3/25/2017
  */
 public class UnitGetter {
+    private String originalGetterName;
     private String returnType;
 
     public String getReturnType() {
@@ -13,6 +14,15 @@ public class UnitGetter {
 
     public UnitGetter setReturnType(String returnType) {
         this.returnType = returnType;
+        return this;
+    }
+
+    public String getOriginalGetterName() {
+        return originalGetterName;
+    }
+
+    public UnitGetter setOriginalGetterName(String originalGetterName) {
+        this.originalGetterName = originalGetterName;
         return this;
     }
 }

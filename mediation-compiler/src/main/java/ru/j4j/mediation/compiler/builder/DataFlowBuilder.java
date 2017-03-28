@@ -100,6 +100,11 @@ public class DataFlowBuilder {
                             setter.getOriginalSetterName(),
                             CONTEXT_PREFIX + setterName);
                 });
+                unit.getAllCommands().forEach((commandName, command) -> {
+                    codeBuilder.addStatement("$1N.$2L()",
+                            UNIT_PREFIX + unitName,
+                            command.getOriginalName());
+                });
                 unit.getAllGetters().forEach((getterName, getter) -> {
                     codeBuilder.addStatement("$1N = $2N.$3L()",
                             CONTEXT_PREFIX + getterName,
@@ -107,7 +112,6 @@ public class DataFlowBuilder {
                             getter.getOriginalGetterName());
                 });
             }));
-            //TODO
 
             codeBuilder.add("\n");
             codeBuilder.add("// ****************************\n");

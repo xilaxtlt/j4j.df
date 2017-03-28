@@ -16,6 +16,7 @@ public class Unit {
     private final String unitType;
     private final Map<String, UnitSetter> setters = new HashMap<>();
     private final Map<String, UnitGetter> getters = new HashMap<>();
+    private final Map<String, Command> commands = new HashMap<>();
 
     public Unit(String unitType) {
         this.unitType = unitType;
@@ -31,6 +32,10 @@ public class Unit {
 
     public Map<String, UnitSetter> getAllSetters() {
         return Collections.unmodifiableMap(setters);
+    }
+
+    public Map<String, Command> getAllCommands() {
+        return Collections.unmodifiableMap(commands);
     }
 
     public UnitGetter getGetter(String getterName, CreateIfNotExists createIfNotExists) {
@@ -49,5 +54,15 @@ public class Unit {
                 UnitSetter::new,
                 CreateIfNotExists.YES == createIfNotExists,
                 () -> new IllegalStateException(format("Unit \"%s\" has not setter \"%s\"", unitType, setterName)));
+    }
+
+    public Command getCommand(String commandName, CreateIfNotExists createIfNotExists) {
+        return ModelUtils.get(
+                commands,
+                commandName,
+                Command::new,
+                CreateIfNotExists.YES == createIfNotExists,
+                () -> new IllegalStateException(
+                        format("Unit \"%s\" has not runnable method \"%s\"", unitType, commandName)));
     }
 }

@@ -78,6 +78,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     private void fillModel(RoundEnvironment roundEnv) {
         fillModelByGetters(roundEnv);
         fillModelBySetters(roundEnv);
+        fillModelByCommands(roundEnv);
     }
 
     private void fillModelByGetters(RoundEnvironment roundEnv) {
@@ -149,6 +150,23 @@ public class AnnotationProcessor extends AbstractProcessor {
                             .getSetter(setterName, CreateIfNotExists.YES)
                             .setArgumentType(parameters.get(0).asType().toString())
                             .setOriginalSetterName(originalName);
+                });
+    }
+
+    private void fillModelByCommands(RoundEnvironment roundEnv) {
+        roundEnv.getElementsAnnotatedWith(RunnableMethod.class)
+                .stream()
+                .map(ExecutableElement.class::cast)
+                .forEach(element -> {
+
+                    Element type         = element.getEnclosingElement();
+                    String  unitName     = type.toString();
+                    String  originalName = element.getSimpleName().toString();
+
+                    model.getUnit(UnitClassName.of(unitName), CreateIfNotExists.YES)
+                            .getCommand(originalName, CreateIfNotExists.YES)
+                            .setOriginalName(originalName);
+
                 });
     }
 

@@ -94,6 +94,12 @@ public class DataFlowBuilder {
             ofNullable(pipeline.getUnits()).ifPresent(units -> units.forEach(unitName -> {
                 String unitType = config.getMandatoryUnitType(unitName);
                 Unit   unit     = model.getUnit(UnitClassName.of(unitType), CreateIfNotExists.NO);
+                unit.getAllSetters().forEach((setterName, setter) -> {
+                    codeBuilder.addStatement("$1N.$2L($3N)",
+                            UNIT_PREFIX + unitName,
+                            setter.getOriginalSetterName(),
+                            CONTEXT_PREFIX + setterName);
+                });
                 unit.getAllGetters().forEach((getterName, getter) -> {
                     codeBuilder.addStatement("$1N = $2N.$3L()",
                             CONTEXT_PREFIX + getterName,

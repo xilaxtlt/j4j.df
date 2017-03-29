@@ -39,12 +39,9 @@ public class AnnotationProcessor extends AbstractProcessor {
     private static final String DEFAULT_CONFIG_FILE_NAME = "j4j-mediation.yaml";
 
     private final ClassLoader classLoader = AnnotationProcessor.class.getClassLoader();
-
     private final AtomicBoolean doProcessFlag = new AtomicBoolean(Boolean.FALSE);
 
     private ProcessingEnvironment processingEnv;
-    private MediationConfig mediationConfig;
-    private MediationModel model = new MediationModel();
 
     @Override
     public Set<String> getSupportedAnnotationTypes() {
@@ -60,15 +57,13 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.processingEnv   = processingEnv;
-        this.mediationConfig = loadConfig();
+        this.processingEnv = processingEnv;
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         if (!roundEnv.processingOver() && doProcessFlag.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
-            fillModel(roundEnv);
-            new MediationCompiler(processingEnv, mediationConfig, model).compile();
+            new MediationCompiler(processingEnv, loadConfig(), createModel(roundEnv)).compile();
         }
         return false;
     }
@@ -77,13 +72,15 @@ public class AnnotationProcessor extends AbstractProcessor {
         return new Yaml().loadAs(classLoader.getResourceAsStream(DEFAULT_CONFIG_FILE_NAME), MediationConfig.class);
     }
 
-    private void fillModel(RoundEnvironment roundEnv) {
-        fillModelByGetters(roundEnv);
-        fillModelBySetters(roundEnv);
-        fillModelByCommands(roundEnv);
+    private MediationModel createModel(RoundEnvironment roundEnv) {
+        MediationModel model = new MediationModel();
+        fillModelByGetters(roundEnv, model);
+        fillModelBySetters(roundEnv, model);
+        fillModelByCommands(roundEnv, model);
+        return model;
     }
 
-    private void fillModelByGetters(RoundEnvironment roundEnv) {
+    private void fillModelByGetters(RoundEnvironment roundEnv, MediationModel model) {
         roundEnv.getElementsAnnotatedWith(ToContext.class)
                 .stream()
                 .map(ExecutableElement.class::cast)
@@ -117,7 +114,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 });
     }
 
-    private void fillModelBySetters(RoundEnvironment roundEnv) {
+    private void fillModelBySetters(RoundEnvironment roundEnv, MediationModel model) {
         roundEnv.getElementsAnnotatedWith(FromContext.class)
                 .stream()
                 .map(ExecutableElement.class::cast)
@@ -155,7 +152,7 @@ public class AnnotationProcessor extends AbstractProcessor {
                 });
     }
 
-    private void fillModelByCommands(RoundEnvironment roundEnv) {
+    private void fillModelByCommands(RoundEnvironment roundEnv, MediationModel model) {
         roundEnv.getElementsAnnotatedWith(RunnableMethod.class)
                 .stream()
                 .map(ExecutableElement.class::cast)

@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
@@ -38,6 +39,8 @@ public class AnnotationProcessor extends AbstractProcessor {
     private static final String DEFAULT_CONFIG_FILE_NAME = "j4j-mediation.yaml";
 
     private final ClassLoader classLoader = AnnotationProcessor.class.getClassLoader();
+
+    private final AtomicBoolean doProcessFlag = new AtomicBoolean(Boolean.FALSE);
 
     private ProcessingEnvironment processingEnv;
     private MediationConfig mediationConfig;
@@ -63,9 +66,8 @@ public class AnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        if (!roundEnv.processingOver()) {
+        if (!roundEnv.processingOver() && doProcessFlag.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
             fillModel(roundEnv);
-        } else {
             new MediationCompiler(processingEnv, mediationConfig, model).compile();
         }
         return false;

@@ -9,7 +9,7 @@ public final class ExceptionUtils {
     private ExceptionUtils() {
     }
 
-    public static void wrapThrowable(ThrowableCommand command) {
+    public static void tryIt(ThrowableCommand command) {
         try {
             command.run();
         } catch (RuntimeException e) {

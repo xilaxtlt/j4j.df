@@ -1,5 +1,7 @@
 package ru.j4j.mediation.compiler.config;
 
+import ru.j4j.mediation.compiler.MediationCompileException;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +13,7 @@ import static java.util.Optional.ofNullable;
  * @since 3/25/2017
  */
 @SuppressWarnings("unused")
-public class MediationConfig {
+public final class MediationConfig {
     private Map<String, String> units;
     private Map<String, DataFlow> mediation;
 

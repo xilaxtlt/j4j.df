@@ -11,8 +11,11 @@ import static java.lang.String.format;
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
  */
-public class MediationModel {
+public final class MediationModel {
     private final Map<UnitClassName, Unit> units = new HashMap<>();
+
+    MediationModel() {
+    }
 
     public Unit getUnit(UnitClassName name, CreateIfNotExists createIfNotExists) {
         return ModelUtils.get(

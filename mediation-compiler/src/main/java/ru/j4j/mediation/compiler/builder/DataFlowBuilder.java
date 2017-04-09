@@ -8,9 +8,7 @@ import ru.j4j.mediation.compiler.model.Unit;
 import ru.j4j.mediation.compiler.model.UnitClassName;
 import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 
-import javax.annotation.processing.Filer;
 import javax.lang.model.element.Modifier;
-import java.io.IOException;
 
 import static java.util.Optional.ofNullable;
 
@@ -18,30 +16,27 @@ import static java.util.Optional.ofNullable;
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
  */
-public class DataFlowBuilder {
+final class DataFlowBuilder {
     private static final String INDENT_STRING  = "    ";
     private static final String CONTEXT_PREFIX = "ctx_";
     private static final String UNIT_PREFIX    = "unit_";
 
-    private final Filer filer;
     private final MediationConfig config;
     private final MediationModel model;
     private final String dataFlowName;
     private final DataFlow dataFlow;
 
-    public DataFlowBuilder(Filer filer,
-                           MediationConfig config,
-                           MediationModel model,
-                           String dataFlowName,
-                           DataFlow dataFlow) {
-        this.filer        = filer;
+    DataFlowBuilder(MediationConfig config,
+                    MediationModel model,
+                    String dataFlowName,
+                    DataFlow dataFlow) {
         this.config       = config;
         this.model        = model;
         this.dataFlowName = dataFlowName;
         this.dataFlow     = dataFlow;
     }
 
-    public void write() throws IOException {
+    JavaFile build() {
         // ****************************
         // Type
         // ****************************
@@ -133,9 +128,8 @@ public class DataFlowBuilder {
         // ****************************
         // Java File
         // ****************************
-        JavaFile.builder(dataFlow.getPackageName(), typeBuilder.build())
+        return JavaFile.builder(dataFlow.getPackageName(), typeBuilder.build())
                 .indent(INDENT_STRING)
-                .build()
-                .writeTo(filer);
+                .build();
     }
 }

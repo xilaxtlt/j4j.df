@@ -6,7 +6,7 @@ import java.util.Map;
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
  */
-public class DataFlow {
+public final class DataFlow {
     private String packageName;
     private Map<String, Pipeline> pipelines;
 
@@ -14,6 +14,7 @@ public class DataFlow {
         return packageName;
     }
 
+    @SuppressWarnings("unused")
     public void setPackageName(String packageName) {
         this.packageName = packageName;
     }
@@ -22,6 +23,7 @@ public class DataFlow {
         return pipelines;
     }
 
+    @SuppressWarnings("unused")
     public void setPipelines(Map<String, Pipeline> pipelines) {
         this.pipelines = pipelines;
     }

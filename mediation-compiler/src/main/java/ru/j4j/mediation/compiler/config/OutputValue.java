@@ -4,7 +4,7 @@ package ru.j4j.mediation.compiler.config;
  * @author Artemiy.Shchekotov
  * @since 3/25/2017
  */
-public class OutputValue {
+public final class OutputValue {
     private String name;
     private String type;
 
@@ -12,6 +12,7 @@ public class OutputValue {
         return name;
     }
 
+    @SuppressWarnings("unused")
     public void setName(String name) {
         this.name = name;
     }
@@ -20,6 +21,7 @@ public class OutputValue {
         return type;
     }
 
+    @SuppressWarnings("unused")
     public void setType(String type) {
         this.type = type;
     }

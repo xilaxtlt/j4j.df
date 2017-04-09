@@ -4,14 +4,17 @@ package ru.j4j.mediation.compiler.model;
  * @author Artemiy.Shchekotov
  * @since 3/28/2017
  */
-public class Command {
+public final class Command {
     private String originalName;
+
+    Command() {
+    }
 
     public String getOriginalName() {
         return originalName;
     }
 
-    public Command setOriginalName(String originalName) {
+    Command setOriginalName(String originalName) {
         this.originalName = originalName;
         return this;
     }

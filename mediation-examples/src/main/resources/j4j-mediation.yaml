@@ -1,16 +1,22 @@
-units:
-  eventParametersExtractor: "ru.j4j.mediation.examples.impl.EventParametersExtractor"
-  eventNamePrinter: "ru.j4j.mediation.examples.impl.EventNamePrinter"
-  resultBuilder: "ru.j4j.mediation.examples.impl.ResultBuilder"
 mediation:
+
   ExampleDataFlow:
     packageName: "ru.j4j.mediation.examples.impl.dataflow"
+
     pipelines:
+
       examplePipeline:
+
         inputValues:
           Event: "ru.j4j.mediation.examples.impl.Event"
+
         outputValue:
           name: "Result"
           type: "ru.j4j.mediation.examples.impl.Result"
-        units: ["eventParametersExtractor", "eventNamePrinter", "resultBuilder"]
+
+        units: [
+          "eventParametersExtractor",
+          "eventNamePrinter",
+          "resultBuilder"
+        ]
 

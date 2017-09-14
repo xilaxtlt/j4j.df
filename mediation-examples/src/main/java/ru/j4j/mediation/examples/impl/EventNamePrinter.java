@@ -2,6 +2,7 @@ package ru.j4j.mediation.examples.impl;
 
 import ru.j4j.mediation.core.annotations.FromContext;
 import ru.j4j.mediation.core.annotations.RunnableMethod;
+import ru.j4j.mediation.core.annotations.Unit;
 
 import static java.lang.String.format;
 
@@ -10,6 +11,7 @@ import static java.lang.String.format;
  * @since 3/25/2017
  */
 @SuppressWarnings("unused")
+@Unit("eventNamePrinter")
 public class EventNamePrinter {
     private String eventName;
     private String eventText;

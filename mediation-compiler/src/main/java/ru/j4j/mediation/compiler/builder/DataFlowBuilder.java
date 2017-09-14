@@ -4,8 +4,7 @@ import com.squareup.javapoet.*;
 import ru.j4j.mediation.compiler.config.DataFlow;
 import ru.j4j.mediation.compiler.config.MediationConfig;
 import ru.j4j.mediation.compiler.model.MediationModel;
-import ru.j4j.mediation.compiler.model.Unit;
-import ru.j4j.mediation.compiler.model.UnitClassName;
+import ru.j4j.mediation.compiler.model.UnitSpec;
 import ru.j4j.mediation.compiler.utils.CreateIfNotExists;
 
 import javax.lang.model.element.Modifier;
@@ -75,11 +74,11 @@ final class DataFlowBuilder {
             codeBuilder.add("// Init Context\n");
             codeBuilder.add("// ****************************\n");
             pipeline.getUnits().forEach(unitName ->
-                    model.getUnit(UnitClassName.of(config.getMandatoryUnitType(unitName)), CreateIfNotExists.NO)
+                    model.getUnit(UnitClass.of(config.getMandatoryUnitType(unitName)), CreateIfNotExists.NO)
                             .getAllGetters()
                             .forEach((getterName, getter) ->
                                     codeBuilder.addStatement("$1T $2N",
-                                            ClassName.bestGuess(getter.getReturnType()), CONTEXT_PREFIX + getterName))
+                                            ClassName.bestGuess(getter.getReturnClassName()), CONTEXT_PREFIX + getterName))
             );
 
             codeBuilder.add("\n");
@@ -88,19 +87,19 @@ final class DataFlowBuilder {
             codeBuilder.add("// ****************************\n");
             ofNullable(pipeline.getUnits()).ifPresent(units -> units.forEach(unitName -> {
                 String unitType = config.getMandatoryUnitType(unitName);
-                Unit   unit     = model.getUnit(UnitClassName.of(unitType), CreateIfNotExists.NO);
-                unit.getAllSetters().forEach((setterName, setter) -> {
+                UnitSpec unitSpec = model.getUnit(UnitClass.of(unitType), CreateIfNotExists.NO);
+                unitSpec.getAllSetters().forEach((setterName, setter) -> {
                     codeBuilder.addStatement("$1N.$2L($3N)",
                             UNIT_PREFIX + unitName,
                             setter.getOriginalSetterName(),
                             CONTEXT_PREFIX + setterName);
                 });
-                unit.getAllCommands().forEach((commandName, command) -> {
+                unitSpec.getAllCommands().forEach((commandName, command) -> {
                     codeBuilder.addStatement("$1N.$2L()",
                             UNIT_PREFIX + unitName,
                             command.getOriginalName());
                 });
-                unit.getAllGetters().forEach((getterName, getter) -> {
+                unitSpec.getAllGetters().forEach((getterName, getter) -> {
                     codeBuilder.addStatement("$1N = $2N.$3L()",
                             CONTEXT_PREFIX + getterName,
                             UNIT_PREFIX + unitName,

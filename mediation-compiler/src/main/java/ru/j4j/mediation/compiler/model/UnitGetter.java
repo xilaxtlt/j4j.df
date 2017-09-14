@@ -5,27 +5,20 @@ package ru.j4j.mediation.compiler.model;
  * @since 3/25/2017
  */
 public final class UnitGetter {
-    private String originalGetterName;
-    private String returnType;
+    private final String originalGetterName;
+    private final String returnClassName;
 
-    UnitGetter() {
+    UnitGetter(String originalGetterName, String returnClassName) {
+        this.originalGetterName = originalGetterName;
+        this.returnClassName    = returnClassName;
     }
 
-    public String getReturnType() {
-        return returnType;
-    }
-
-    UnitGetter setReturnType(String returnType) {
-        this.returnType = returnType;
-        return this;
+    public String getReturnClassName() {
+        return returnClassName;
     }
 
     public String getOriginalGetterName() {
         return originalGetterName;
     }
 
-    UnitGetter setOriginalGetterName(String originalGetterName) {
-        this.originalGetterName = originalGetterName;
-        return this;
-    }
 }

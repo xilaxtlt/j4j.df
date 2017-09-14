@@ -7,6 +7,7 @@ import ru.j4j.mediation.compiler.model.MediationModelBuilder;
 import ru.j4j.mediation.core.annotations.FromContext;
 import ru.j4j.mediation.core.annotations.RunnableMethod;
 import ru.j4j.mediation.core.annotations.ToContext;
+import ru.j4j.mediation.core.annotations.Unit;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -40,7 +41,8 @@ public class AnnotationProcessor extends AbstractProcessor {
         result.addAll(asList(
                 FromContext.class.getName(),
                 ToContext.class.getName(),
-                RunnableMethod.class.getName()
+                RunnableMethod.class.getName(),
+                Unit.class.getName()
         ));
         return Collections.unmodifiableSet(result);
     }
